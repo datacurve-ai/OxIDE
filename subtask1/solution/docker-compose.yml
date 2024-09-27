@@ -1,0 +1,11 @@
+# tests/docker-compose.yml
+version: '3.8'
+services:
+  editor:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: vim-haskell-editor:latest
+    container_name: vim_haskell_editor
+    stdin_open: true
+    tty: true

@@ -1,0 +1,3 @@
+packages: .
+
+allow-newer: vty-windows:Win32
