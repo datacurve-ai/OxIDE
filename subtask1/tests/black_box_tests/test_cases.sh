@@ -15,7 +15,7 @@ fi
 
 # Test 2: Check if the editor can open a file
 echo "Running Black-box Test 2: Open file test..."
-if docker exec vim_haskell_editor [ -f "/app/data/sample.hs" ]; then
+if docker exec vim_haskell_editor [ -f "/app/solution/data/sample.hs" ]; then
   test_results+=('{"title": "Open File", "passed": true}')
 else
   test_results+=('{"title": "Open File", "passed": false}')

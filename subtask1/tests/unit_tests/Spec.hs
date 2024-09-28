@@ -11,12 +11,12 @@ main :: IO ()
 main = hspec $ do
     describe "Core.Buffer" $ do
         it "loads buffer correctly" $ do
-            (buffer, totalLines) <- loadBuffer "data/sample.hs"
+            (buffer, totalLines) <- loadBuffer "solution/data/sample.hs" -- Updated path
             totalLines `shouldSatisfy` (> 0)
             Map.size buffer `shouldBe` totalLines
 
         it "retrieves lines from buffer" $ do
-            (buffer, _) <- loadBuffer "data/sample.hs"
+            (buffer, _) <- loadBuffer "solution/data/sample.hs" -- Updated path
             let line = getLineFromBuffer buffer 0
             T.null line `shouldBe` False
 
@@ -33,18 +33,18 @@ main = hspec $ do
                 }
 
         it "moves cursor left correctly" $ do
-            let newState = moveCursor Left sampleState
+            let newState = moveCursor CursorLeft sampleState
             cursorPos newState `shouldBe` (4, 0)
 
         it "moves cursor right correctly" $ do
-            let newState = moveCursor Right sampleState
+            let newState = moveCursor CursorRight sampleState
             cursorPos newState `shouldBe` (5, 0)
 
         it "moves cursor up correctly" $ do
             let stateWithCursor = sampleState { cursorPos = (0, 1) }
-            let newState = moveCursor Up stateWithCursor
+            let newState = moveCursor CursorUp stateWithCursor
             cursorPos newState `shouldBe` (0, 0)
 
         it "moves cursor down correctly" $ do
-            let newState = moveCursor Down sampleState
+            let newState = moveCursor CursorDown sampleState
             cursorPos newState `shouldBe` (5, 1)
