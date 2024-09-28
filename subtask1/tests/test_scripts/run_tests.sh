@@ -42,32 +42,14 @@ fi
 echo "Running black-box tests..."
 cd "$TESTS_DIR/black_box_tests"
 BLACK_BOX_RESULTS=$(./test_cases.sh)
-
+echo "$BLACK_BOX_RESULTS"
 echo "Running unit tests..."
 cd "$SOLUTION_DIR"
 UNIT_TEST_RESULTS=$(cabal test)
+echo "$UNIT_TEST_RESULTS"
 
-FINAL_JSON=$(python -c "
-import json
-import re
-
-black_box_results = '''$BLACK_BOX_RESULTS'''
-unit_test_results = '''$UNIT_TEST_RESULTS'''
-
-# Clean up black box results
-clean_black_box_results = re.search(r'\[.*\]', black_box_results, re.DOTALL)
-if clean_black_box_results:
-    clean_black_box_results = json.loads(clean_black_box_results.group())
-else:
-    clean_black_box_results = []
-
-output = {
-    'black_box_tests': clean_black_box_results,
-    'unit_tests': unit_test_results.strip()
-}
-
-print(json.dumps(output, indent=2))
-")
+# Process the results using the Python script
+FINAL_JSON=$(echo "$BLACK_BOX_RESULTS" | echo "$UNIT_TEST_RESULTS" | python3 $TESTS_DIR/test_scripts/process_results.py)
 
 echo "$FINAL_JSON" > "$TEST_RESULTS"
 
