@@ -1,0 +1,10 @@
+services:
+  app:
+    build: .
+    volumes:
+      - .:/app
+      - cargo_target:/app/target
+    tty: true
+
+volumes:
+  cargo_target:

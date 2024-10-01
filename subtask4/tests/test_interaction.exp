@@ -1,0 +1,67 @@
+#!/usr/bin/expect -f
+
+set timeout 30
+
+puts "Searching for terminal executable..."
+set executable [exec sh -c {find /app/target/release -type f -name "terminal" | head -n 1}]
+
+if {$executable eq ""} {
+    puts "Executable not found in release directory. Falling back to cargo run..."
+    set executable "cargo run --release --"
+} else {
+    puts "Found terminal executable: $executable"
+}
+
+puts "Attempting to spawn executable..."
+if {$executable eq "cargo run --release --"} {
+    spawn {*}[split $executable " "]
+} else {
+    spawn $executable
+}
+
+# Wait for any initial output
+expect {
+    timeout {
+        puts "Timeout: No initial output received"
+        exit 1
+    }
+    -re ".+" {
+        puts "Received initial output"
+    }
+}
+
+# Send down key to navigate
+send "\[B"
+
+# Wait for content to appear
+expect {
+    timeout {
+        puts "Timeout: Content did not appear after pressing down key"
+        puts "Current buffer content:"
+        puts $expect_out(buffer)
+        exit 1
+    }
+    -re ".+" {
+        puts "Content appeared after pressing down key"
+        puts "Current buffer content:"
+        puts $expect_out(buffer)
+    }
+}
+
+# Test navigation
+send "j"
+send "k"
+send "q"
+
+expect {
+    timeout {
+        puts "Timeout: Program did not exit after sending 'q'"
+        exit 1
+    }
+    eof {
+        puts "Program exited successfully"
+    }
+}
+
+puts "Interaction test passed"
+exit 0
