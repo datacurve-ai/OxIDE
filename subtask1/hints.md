@@ -1,10 +1,11 @@
-# Hints for Implementing the Code
+## Hint 1 (Slight):
 
-## Slight Hint
-The main file to focus on is `Main.hs` in the `app` folder, which initializes the editor by reading command-line arguments. The key function that kicks off the editor is `startEditor` from the `UI.Display` module. Ensure your file path argument is handled correctly.
+Consider using the `tui` crate to create a split layout in the terminal, with one pane showing the file list and another showing the content of the selected file.
 
-## Medium Hint
-To understand how the editor displays content and handles user input, explore `UI.Display` and `UI.EventHandler`. `UI.Display` sets up the visual output using `vty`, while `UI.EventHandler` listens for key events and updates the editor state. You’ll also need to load the buffer with `Core.Buffer.loadBuffer` and highlight syntax with `UI.SyntaxHighlight.highlightLine`.
+## Hint 2 (Medium):
 
-## Big Hint
-The heart of the editor lies in how it manages and updates the `EditorState`, which is defined in `Core.Types`. This state includes the file buffer, cursor position, and current mode (e.g., Normal, Insert). Movement commands are handled in `Core.Cursor.moveCursor`, while text input and deletion are handled in `UI.EventHandler`. The `SyntaxHighlight` module handles colorizing different languages based on file extension. Pay special attention to the render loop in `UI.Render` and how it calls `renderBuffer` and `renderStatusBar`.
+Implement event handling using the `crossterm` crate to respond to user input. Use key events to navigate the file list (e.g., Up/Down arrows), select files (Enter key), and scroll through file content (e.g., 'j' and 'k' keys for down and up).
+
+## Hint 3 (Final):
+
+Use the `syntect` crate to add syntax highlighting to the displayed file content. Load syntax definitions and themes, and apply them when rendering the content. Organize your code by separating the application state (`app.rs`), the UI rendering logic (`ui.rs`), and the main application loop (`main.rs`). Create a Syntaxes folder and dump the binary for zig syntax or the zig.sublime-text file works too.

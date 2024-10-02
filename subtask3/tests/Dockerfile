@@ -1,11 +1,18 @@
 FROM rust:latest
 
-RUN apt-get update && apt-get install -y expect python3
+# Install necessary packages including pkg-config and Lua
+RUN apt-get update && apt-get install -y \
+    expect \
+    python3 \
+    pkg-config \
+    lua5.4 \
+    liblua5.4-dev
 
 WORKDIR /app
 
 COPY . /app
 
+# Build the Rust project
 RUN cargo build --release
 
 # Run the tests and output specific messages for parsing

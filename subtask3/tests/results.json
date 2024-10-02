@@ -1,0 +1,57 @@
+{
+    "unit_tests": [
+        {
+            "test": "tests::test_editor_new",
+            "status": "ok"
+        },
+        {
+            "test": "tests::test_app_new",
+            "status": "ok"
+        },
+        {
+            "test": "tests::test_insert_char",
+            "status": "ok"
+        },
+        {
+            "test": "tests::test_execute_command_quit",
+            "status": "ok"
+        },
+        {
+            "test": "tests::test_backspace",
+            "status": "ok"
+        },
+        {
+            "test": "tests::test_execute_command_save",
+            "status": "ok"
+        },
+        {
+            "test": "tests::test_lua_integration_initialize",
+            "status": "ok"
+        },
+        {
+            "test": "tests::test_lua_execute_unknown_command",
+            "status": "ok"
+        },
+        {
+            "test": "tests::test_lua_insert_text",
+            "status": "ok"
+        },
+        {
+            "test": "tests::test_move_cursor_down",
+            "status": "ok"
+        },
+        {
+            "test": "tests::test_mode_transition_to_insert",
+            "status": "ok"
+        },
+        {
+            "test": "tests::test_scroll_content_down",
+            "status": "ok"
+        },
+        {
+            "test": "tests::test_scroll_content_up",
+            "status": "ok"
+        }
+    ],
+    "interaction_tests": "passed"
+}
