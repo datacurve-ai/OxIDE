@@ -9,6 +9,8 @@ import Core.Buffer (loadBuffer, detectSyntax)
 import UI.Render (renderEditor)
 import UI.StatusBar (renderStatusBar)
 import UI.EventHandler (handleEvent)
+import Control.Monad (void)
+import Control.Concurrent (forkIO, threadDelay)
 import qualified Graphics.Vty as Vty
 
 #if defined(mingw32_HOST_OS)
@@ -21,7 +23,7 @@ import Graphics.Vty.Platform.Unix (mkVty)
 
 startEditor :: EditorConfig -> IO ()
 startEditor config = do
-    (initialBuffer, totalLines) <- loadBuffer (configFilePath config)
+    initialBuffer <- loadBuffer (configFilePath config)
     let initialState = EditorState
             { buffer     = initialBuffer
             , cursorPos  = (0, 0)
@@ -29,8 +31,10 @@ startEditor config = do
             , mode       = Normal
             , syntax     = detectSyntax (configFilePath config)
             , filePath   = configFilePath config
-            , fileLines  = totalLines
-            , screenSize = (0, 0)
+            , fileLines  = Map.size initialBuffer  -- Initialize fileLines with the size of the buffer map
+            , screenSize = (0, 0)                  -- Initialize screenSize here
+            , undoStack  = []                      -- Initialize undo stack
+            , redoStack  = []                      -- Initialize redo stack
             }
     
     cfg <- userConfig  -- Load user configuration with IO action
@@ -38,16 +42,24 @@ startEditor config = do
     initialSize <- displayBounds $ outputIface vty
     let stateWithSize = initialState { screenSize = (regionWidth initialSize, regionHeight initialSize) }
     
-    mainLoop vty stateWithSize
+    void $ forkIO $ refreshScreen vty stateWithSize  -- Start a separate thread for screen refresh
+    eventLoop vty stateWithSize  -- Use eventLoop instead of mainLoop for consistency with second code snippet
     shutdown vty
 
-mainLoop :: Vty -> EditorState -> IO ()
-mainLoop vty state = do
+-- Refresh the screen at regular intervals.
+refreshScreen :: Vty -> EditorState -> IO ()
+refreshScreen vty state = do
     let pic = renderEditor state
     update vty pic
+    threadDelay 50000  -- Refresh every 50 milliseconds
+    refreshScreen vty state
+
+-- Main event loop to handle user inputs and update editor state.
+eventLoop :: Vty -> EditorState -> IO ()
+eventLoop vty state = do
     e <- nextEvent vty
     newState <- handleEvent e state
     
     case newState of 
         Nothing -> return () 
-        Just nst -> mainLoop vty nst
+        Just nst -> eventLoop vty nst
