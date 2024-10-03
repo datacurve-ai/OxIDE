@@ -1,19 +1,46 @@
-# overview_prompt.md
+# Overview for Subtask 3
 
-Integrate Lua into your Rust-based terminal text editor to allow custom scripting and plugin support. The integration process involves creating a modular system where Lua scripts can interact with the Rust core.
+Building upon the Vim-like terminal text editor from subtasks 1 and 2, enhance the editor with Lua scripting support. This integration will allow for custom scripting and plugin functionality.
 
-1. **Modular Design**: Introduce a dedicated module (`lua_integration.rs`) to handle all Lua-related functionalities. This separation ensures that Lua integration does not clutter the core editor logic and allows for easier maintenance and scalability.
+## New Requirements
 
-2. **Embedding Lua`**: Utilize appropriate crate to embed a Lua interpreter within the Rust application. The crate provides the necessary tools to execute Lua scripts, manage Lua state, and facilitate communication between Rust and Lua.
+1. **Lua Integration**:
+   - Create a `LuaPluginManager` to handle Lua script execution and integration with the editor.
+   - Implement a system to load and execute Lua scripts from a designated directory.
 
-3. **Exposing Editor Functions to Lua**: Created Lua-accessible functions within the `LuaPluginManager` that allow Lua scripts to interact with the editor. For instance, functions like `insert_text` enable Lua scripts to manipulate the editor's content directly and `execute_command` to run custom lua commands.
+2. **Exposing Editor Functions to Lua**:
+   - Create Lua-accessible functions that allow scripts to interact with the editor.
+   - Implement at least an `insert_text` function that can be called from Lua scripts.
 
-4. **Command Registration System**: Implemente a system where Lua scripts can register custom commands using a `register_command` function. These commands can then be invoked from within the editor, providing users with the ability to extend editor functionalities dynamically.
+3. **Command Execution System**:
+   - Extend the command system to handle Lua-defined commands.
+   - Implement error handling for unknown or failed Lua commands.
 
-5. **Handling Rust Ownership and Lifetimes**: Addresse Rust's strict ownership and borrowing rules by using `Rc<RefCell<App>>` and `Weak<RefCell<App>>`. 
+4. **Rust-Lua Interaction**:
+   - Use `Rc<RefCell<App>>` to share the `App` state between Rust and Lua safely.
+   - Handle Rust's ownership and borrowing rules when interacting with Lua.
 
-6. **Error Handling and Stability**: Incorporate comprehensive error handling to manage potential issues arising from Lua script execution. This ensures that the editor remains stable even if Lua scripts encounter errors or behave unexpectedly.
+5. **File Operations**:
+   - Implement file saving functionality that can be triggered from both Rust and Lua.
 
-7. **Script Loading Mechanism**: Developed a mechanism to load and execute Lua scripts from a designated `solution/lua_scripts/` directory. This allows users to add or modify scripts without altering the Rust codebase, promoting a plugin-friendly environment.
+## Implementation Details
+
+- Create a new module `lua_integration.rs` to handle all Lua-related functionality.
+- Use a Lua crate (e.g., `rlua` or `mlua`) to embed a Lua interpreter within the Rust application.
+- Implement the `LuaPluginManager` struct with methods for initialization, script loading, and command execution.
+- Modify the `App` struct to include a `LuaPluginManager` instance.
+- Implement error handling for Lua script execution and command processing.
+
+
+
+Ensure your implementation does the following:
+- Successful initialization of the `LuaPluginManager`.
+- Execution of Lua scripts that interact with the editor (e.g., inserting text).
+- Proper handling of unknown Lua commands.
+- Integration of Lua functionality with existing editor features.
+
+
+
+
 
 

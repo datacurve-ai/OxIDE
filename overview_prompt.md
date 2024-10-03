@@ -1,22 +1,36 @@
-#### **Comprehensive Overview of the Rust Terminal Editor Project**
+# Terminal Text Editor in Rust
 
-The Rust Terminal Editor project is a command-line based text editor. The project is structured into four key tasks, each building upon the previous to deliver a tool for text editing with advanced functionalities.
+Your task is to build a sophisticated, terminal text editor in Rust. This project is divided into four subtasks, each building upon the previous one to create a feature-rich editing experience.
 
-1. **Task 1: Basic User Interface (UI) Implementation**
-   
-   *The foundation of the editor involves creating a user-friendly interface within the terminal. This includes setting up the layout, handling user inputs, and displaying the current file's content. The focus is on ensuring navigation and basic editing capabilities.*
+## Project Overview
 
-2. **Task 2: Common Editing Functions**
-   
-   *Building upon the basic UI, this task introduces essential editing functions such as cursor movement, text insertion, deletion, and file saving. These functionalities are important for effective text manipulation and provide users with the tools needed for everyday editing tasks.*
+1. **Basic Editor Functionality** (Subtask 1)
+   - Implement core features like file navigation, content display, and syntax highlighting.
+   - Focus on creating a solid foundation for the editor's user interface and file interaction.
 
-3. **Task 3: Lua Integration for Extensibility**
-   
-   *To enhance the editor's flexibility and extend its capabilities, Lua scripting is integrated. This allows users to customize the editor's behavior, automate tasks, and add new features through Lua scripts. The integration ensures that the editor remains adaptable to various user needs and workflows.*
+2. **Advanced Editing and Mode System** (Subtask 2)
+   - Introduce a mode system (Normal, Insert, Command) similar to Vim.
+   - Implement advanced text editing features and file operations.
 
-4. **Task 4: Browser-Based Markdown Rendering**
-   
-   *The final task focuses on implementing a Markdown preview feature that renders Markdown files in a web browser. This involves setting up a web server within the editor, converting Markdown to HTML using a templating engine, and automating the launch of the user's default browser to display the rendered content. This functionality provides users with a clear and styled visualization of their Markdown documents, enhancing readability and presentation.*
+3. **Lua Scripting Integration** (Subtask 3)
+   - Add Lua scripting support to allow for custom plugins and extended functionality.
+   - Create a bridge between Rust and Lua for seamless integration.
+
+4. **Markdown Preview Feature** (Subtask 4)
+   - Implement a browser-based Markdown preview functionality.
+   - Add real-time updating of the preview as the Markdown file is edited.
+
+
+## Technology Stack
+
+- Rust as the primary programming language
+- Various Rust crates for specific functionalities (details in subtask overviews)
+- Lua for scripting support
+- Web technologies for Markdown preview
+
+## Getting Started
+
+Begin with Subtask 1 and progress sequentially. Each subtask's overview provides detailed requirements and implementation hints. Refer to the respective `overview_prompt.md` files for specific instructions on each phase of the project.
 
 
 **Key Commands:**

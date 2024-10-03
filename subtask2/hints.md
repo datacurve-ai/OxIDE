@@ -1,10 +1,29 @@
 ## Hint 1 (Slight):
 
-Consider defining a `Mode` enum with variants for each editor mode, and a trait `ModeHandler` that each mode implements for handling key events.
+Implement the mode system using an enum `Mode` with variants for Normal, Insert, and Command modes. Create a trait `ModeHandler` that defines common behavior for all modes, such as handling key events. Each mode should implement this trait.
 
 ## Hint 2 (Medium):
 
-Use the `tui` crate's `Terminal` and `Backend` to manage the rendering of the UI components. Split the UI into chunks to display the file list, file content, and status bar.
+Extend the `App` struct to include cursor position (`cursor_x` and `cursor_y`) and an `Editor` instance. Implement methods for text insertion, deletion, and cursor movement. For example:
+
+```rust
+impl App {
+    fn insert_char(&mut self, c: char) {
+        // Insert character at cursor position
+        // Update cursor position
+    }
+
+    fn backspace(&mut self) {
+        // Remove character before cursor
+        // Update cursor position
+    }
+
+    fn move_cursor_down(&mut self) {
+        // Move cursor to next line
+        // Handle edge cases (e.g., end of file)
+    }
+}
+```
 
 ## Hint 3 (Strong):
 

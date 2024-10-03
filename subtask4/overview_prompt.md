@@ -1,28 +1,35 @@
-#### **Hints for Implementing Browser-Based Markdown Rendering**
+# Overview for Subtask 4
 
-1. **Slight Hint:**
-   - **Set up a simple HTTP server in Rust.**  
-   You'll need a crate like `warp` to handle serving HTTP requests. Define a route that serves the HTML output of the rendered Markdown file. Investigate the `warp::serve` function and how it integrates with async Rust.
+Building upon the Vim-like terminal text editor from previous subtasks, enhance the editor with a browser-based Markdown preview feature.
 
-2. **Medium Hint:**
-   - **Convert Markdown to HTML using `pulldown_cmark`.**  
-   Use `pulldown_cmark` to convert your Markdown content into HTML. This crate allows parsing and rendering of Markdown content. The flow would involve converting the content in your editor into HTML and passing it to your HTTP server to serve.
+## New Requirements
 
-   **Key Code Tip**: After getting the Markdown content, use something like:
-   ```rust
-   let parser = pulldown_cmark::Parser::new_ext(markdown_text, Options::all());
-   let mut html_output = String::new();
-   pulldown_cmark::html::push_html(&mut html_output, parser);
-   ```
+1. **Markdown Preview**:
+   - Implement a browser-based preview for Markdown files.
+   - Create a command (`:browser`) to open the current Markdown file in the default web browser.
 
-3. **Big Hint:**
-   - **Automatically open the browser to show the rendered content.**  
-   After starting your HTTP server, use the `open` crate to open the browser automatically. The command `open::that("http://127.0.0.1:3030")` will open the system's default browser to the correct port.
+2. **HTTP Server**:
+   - Implement a simple HTTP server to serve the rendered Markdown content.
+   - The server should update the preview in real-time as the file is edited.
 
-   **Key Code Tip**: When handling the `:browser` command, check if the server is already running. If not, spawn the server using Tokio's runtime:
-   ```rust
-   if let Err(e) = open::that("http://127.0.0.1:3030") {
-       eprintln!("Failed to open browser: {}", e);
-   }
-   ```
-   Then, make sure you serve the HTML content as the response in the `warp` server.
+3. **Markdown Rendering**:
+   - Use a Markdown parsing library to convert Markdown to HTML.
+   - Ensure proper rendering of common Markdown elements (headings, lists, code blocks, etc.).
+
+4. **Browser Integration**:
+   - Automatically open the default web browser when the preview command is executed.
+   - Ensure the preview updates when the Markdown file is modified in the editor.
+
+
+## Implementation Details
+
+- Create a new module to handle the preview functionality.
+- Implement an asynchronous HTTP server using a library.
+- Utilize some crate to launch the default web browser.
+- Implement the `:browser` command in the command mode to trigger the preview.
+
+
+
+
+
+

@@ -1,11 +1,30 @@
 ## Hint 1 (Slight):
 
-Consider using the `tui` crate to create a split layout in the terminal, with one pane showing the file list and another showing the content of the selected file.
+Use the `tui` crate to create a split layout in the terminal. The left pane should display the file list, and the right pane should show the content of the selected file. Implement basic navigation using the `crossterm` crate to handle key events (Up/Down arrows for file list, 'j' and 'k' for content scrolling).
 
 ## Hint 2 (Medium):
 
-Implement event handling using the `crossterm` crate to respond to user input. Use key events to navigate the file list (e.g., Up/Down arrows), select files (Enter key), and scroll through file content (e.g., 'j' and 'k' keys for down and up).
+Implement the `App` struct in `app.rs` to manage the application state. Include fields for:
+- `files`: A vector of file names
+- `selected_file_index`: The currently selected file in the list
+- `current_file`: The content of the selected file
+- `content_scroll`: The current scroll position in the file content
+
+Implement methods for file navigation, content scrolling, and file loading. Use the `crossterm` crate for handling key events in `main.rs`, updating the `App` state accordingly.
 
 ## Hint 3 (Final):
 
-Use the `syntect` crate to add syntax highlighting to the displayed file content. Load syntax definitions and themes, and apply them when rendering the content. Organize your code by separating the application state (`app.rs`), the UI rendering logic (`ui.rs`), and the main application loop (`main.rs`). Create a Syntaxes folder and dump the binary for zig syntax or the zig.sublime-text file works too.
+Integrate the `syntect` crate for syntax highlighting:
+1. In `app.rs`, add `syntax_set` and `theme` fields to the `App` struct.
+2. Load syntax definitions and themes in the `App::new()` method, ensuring Zig syntax is included.
+3. Implement a method to apply syntax highlighting to file content.
+4. In `ui.rs`, use the highlighting information when rendering file content.
+
+Organize your code as follows:
+- `main.rs`: Set up the terminal, run the main event loop, and handle input events.
+- `app.rs`: Define the `App` struct and implement methods for state management and syntax highlighting.
+- `ui.rs`: Implement functions to draw the UI components using `tui`.
+
+Create a `Syntaxes` folder in your project and include the Zig syntax definition file (e.g., `zig.sublime-syntax`) to ensure Zig highlighting works correctly.
+
+Remember to implement proper error handling and ensure the terminal is restored to its original state on exit or panic.

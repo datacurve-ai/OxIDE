@@ -1,38 +1,25 @@
-# hints.md
-
-### **Slight Hint**
 
 
-*Use an embedded Lua interpreter, such as the `mlua` crate, to facilitate communication between Rust and Lua. Ensure that you expose necessary editor functions to Lua by creating Lua-accessible functions within this module. This will allow Lua scripts to interact with and manipulate the editor's state effectively.*
-Especially: `mlua = { version = "0.7.4", features = ["lua54", "vendored"] }`
 
-### **Medium Hint**
 
-*Address Rust's ownership and lifetime rules by utilizing smart pointers like `Rc<RefCell<App>>` and `Weak<RefCell<App>>`. This will enable safe and flexible sharing of the editor's state between Rust and Lua without running into borrowing conflicts. Additionally, implement a command registration system where Lua scripts can register and execute custom commands, enhancing the editor's extensibility.*
 
-### **Big Hint**
-
-*Use an action-command approach and implement the two necessary functions to pass the tests:*
 ```
-AppAction::ExecuteCommand(cmd) => self.execute_command(&cmd),
-            AppAction::SelectFile => {
-                if let Err(e) = self.select_file() {
-                    eprintln!("Error selecting file: {}", e);
-                }
-            }
-```
-```
-pub fn insert_text(&mut self, text: &str) {
-        for c in text.chars() {
-            if c == '\n' {
-                self.insert_newline();
-            } else {
-                self.insert_char(c);
-            }
-        }
-    }
-    
-```
+## Hint 1 (Slight):
+
+To implement the Markdown preview feature:
+1. Use the `pulldown_cmark` crate for Markdown to HTML conversion.
 
 
+## Hint 2 (Medium):
 
+2. Consider using a lightweight web framework like `warp` or `tiny_http` for serving the preview.
+3. The `open` crate can be useful for launching the default web browser.
+
+
+## Hint 3 (Strong):
+
+To integrate the preview feature with the existing editor:
+1. Add a new field to the `App` struct to manage the preview state.
+2. Implement the `:browser` command in the command mode.
+3. When the command is executed, start the preview server if it's not already running, then open the browser.
+4. Ensure the preview server is properly shut down when the editor closes.
