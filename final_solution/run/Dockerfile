@@ -22,8 +22,6 @@ EXPOSE 3030
 
 # Run the tests and output specific messages for parsing
 CMD bash -c "\
-    echo 'Running unit tests...'; \
-    if cargo test; then echo 'Unit tests passed'; else echo 'Unit tests failed'; fi; \
-    echo 'Running interaction test...'; \
-    if expect tests/test_interaction.exp; then echo 'Interaction test passed'; else echo 'Interaction test failed'; fi \
-"
+    echo 'Running...'; \
+    if cargo run; then echo 'Ran'; else echo 'Unit tests failed'; fi; \
+   

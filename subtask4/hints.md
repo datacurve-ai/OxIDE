@@ -1,11 +1,38 @@
-## Hint 1 (Slight):
+# hints.md
 
-Consider using the `tui` crate to create a split layout in the terminal, with one pane showing the file list and another showing the content of the selected file.
+### **Slight Hint**
 
-## Hint 2 (Medium):
 
-Implement event handling using the `crossterm` crate to respond to user input. Use key events to navigate the file list (e.g., Up/Down arrows), select files (Enter key), and scroll through file content (e.g., 'j' and 'k' keys for down and up).
+*Use an embedded Lua interpreter, such as the `mlua` crate, to facilitate communication between Rust and Lua. Ensure that you expose necessary editor functions to Lua by creating Lua-accessible functions within this module. This will allow Lua scripts to interact with and manipulate the editor's state effectively.*
+Especially: `mlua = { version = "0.7.4", features = ["lua54", "vendored"] }`
 
-## Hint 3 (Final):
+### **Medium Hint**
 
-Use the `syntect` crate to add syntax highlighting to the displayed file content. Load syntax definitions and themes, and apply them when rendering the content. Organize your code by separating the application state (`app.rs`), the UI rendering logic (`ui.rs`), and the main application loop (`main.rs`). Create a Syntaxes folder and dump the binary for zig syntax or the zig.sublime-text file works too.
+*Address Rust's ownership and lifetime rules by utilizing smart pointers like `Rc<RefCell<App>>` and `Weak<RefCell<App>>`. This will enable safe and flexible sharing of the editor's state between Rust and Lua without running into borrowing conflicts. Additionally, implement a command registration system where Lua scripts can register and execute custom commands, enhancing the editor's extensibility.*
+
+### **Big Hint**
+
+*Use an action-command approach and implement the two necessary functions to pass the tests:*
+```
+AppAction::ExecuteCommand(cmd) => self.execute_command(&cmd),
+            AppAction::SelectFile => {
+                if let Err(e) = self.select_file() {
+                    eprintln!("Error selecting file: {}", e);
+                }
+            }
+```
+```
+pub fn insert_text(&mut self, text: &str) {
+        for c in text.chars() {
+            if c == '\n' {
+                self.insert_newline();
+            } else {
+                self.insert_char(c);
+            }
+        }
+    }
+    
+```
+
+
+

@@ -1,0 +1,33 @@
+{
+    "unit_tests": [
+        {
+            "test": "tests::test_command_mode_quit",
+            "status": "ok"
+        },
+        {
+            "test": "tests::test_move_cursor",
+            "status": "ok"
+        },
+        {
+            "test": "tests::test_handle_key_event_normal_mode",
+            "status": "ok"
+        },
+        {
+            "test": "tests::test_handle_key_event_insert_mode",
+            "status": "ok"
+        },
+        {
+            "test": "tests::test_app_initialization",
+            "status": "ok"
+        },
+        {
+            "test": "tests::test_open_browser_preview",
+            "status": "ok"
+        },
+        {
+            "test": "tests::test_command_mode_save",
+            "status": "ok"
+        }
+    ],
+    "interaction_tests": "failed"
+}

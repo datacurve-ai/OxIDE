@@ -1,48 +1,36 @@
 import json
 import re
 
-def parse_docker_output():
+def parse_docker_log(file_path):
     results = {
-        'build': 'unknown',
-        'unit_tests': 'unknown',
-        'interaction_test': 'unknown',
-        'zig_syntax_test': 'unknown'
+        'unit_tests': [],
+        'interaction_tests': ''
     }
 
-    # Read the Docker container logs
-    with open('docker_output.log', 'r') as f:
-        logs = f.read()
+    with open(file_path, 'r') as f:
+        content = f.read()
 
-    # Check for build success/failure
-    if 'Finished `release` profile [optimized] target(s) in' in logs:
-        results['build'] = 'passed'
-    else:
-        results['build'] = 'failed'
+    # Parse unit test results
+    unit_test_cases = re.findall(r"test (\S+) ... \x1b\[32mok\x1b\(B\x1b\[m", content)
+    for test_case in unit_test_cases:
+        results['unit_tests'].append({
+            'test': test_case,
+            'status': 'ok'
+        })
 
-    # Check for unit tests success/failure
-    unit_tests_pattern = r'test result: (ok|FAILED)\. (\d+) passed; (\d+) failed;'
-    unit_tests_match = re.search(unit_tests_pattern, logs)
-    if unit_tests_match:
-        if unit_tests_match.group(1) == 'ok' and unit_tests_match.group(3) == '0':
-            results['unit_tests'] = 'passed'
-        else:
-            results['unit_tests'] = 'failed'
-
-    # Check for interaction test success/failure
-    if 'Interaction test passed' in logs:
-        results['interaction_test'] = 'passed'
-    elif 'Interaction test failed' in logs:
-        results['interaction_test'] = 'failed'
-
-    # Check for Zig syntax highlighting test
-    if 'test tests::test_zig_syntax_highlighting ... ok' in logs:
-        results['zig_syntax_test'] = 'passed'
-    else:
-        results['zig_syntax_test'] = 'failed'
+    # Parse interaction test result
+    interaction_test_match = re.search(r"Interaction test (failed|passed)", content)
+    if interaction_test_match:
+        results['interaction_tests'] = interaction_test_match.group(1)
 
     return results
 
-if __name__ == '__main__':
-    results = parse_docker_output()
-    with open('results.json', 'w') as f:
-        json.dump(results, f, indent=4)
+if __name__ == "__main__":
+    docker_log = 'docker_output.log'
+    parsed_results = parse_docker_log(docker_log)
+
+    # Write results to JSON
+    with open('results.json', 'w') as outfile:
+        json.dump(parsed_results, outfile, indent=4)
+
+    print("Docker log results written to docker_results.json")

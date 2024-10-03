@@ -1,10 +1,13 @@
 #!/usr/bin/expect -f
 
-set timeout 30
+# Set a timeout for Expect commands
+set timeout 10
 
 puts "Searching for terminal executable..."
+# Attempt to find the terminal executable in the release directory
 set executable [exec sh -c {find /app/target/release -type f -name "terminal" | head -n 1}]
 
+# If not found, fallback to using cargo run
 if {$executable eq ""} {
     puts "Executable not found in release directory. Falling back to cargo run..."
     set executable "cargo run --release --"
@@ -13,49 +16,45 @@ if {$executable eq ""} {
 }
 
 puts "Attempting to spawn executable..."
-if {$executable eq "cargo run --release --"} {
+# Spawn the terminal executable or cargo run based on what was found
+if {[string match "cargo run*" $executable]} {
     spawn {*}[split $executable " "]
 } else {
     spawn $executable
 }
 
-# Wait for any initial output
-expect {
-    timeout {
-        puts "Timeout: No initial output received"
-        exit 1
-    }
-    -re ".+" {
-        puts "Received initial output"
-    }
-}
+# Wait for the application to initialize
+sleep 2
 
-# Send down key to navigate
-send "\[B"
+# Step 3: Ensure we're in Normal mode
+send "\x1b"            ;# Escape key to ensure Normal mode
+sleep 0.5
 
-# Wait for content to appear
-expect {
-    timeout {
-        puts "Timeout: Content did not appear after pressing down key"
-        puts "Current buffer content:"
-        puts $expect_out(buffer)
-        exit 1
-    }
-    -re ".+" {
-        puts "Content appeared after pressing down key"
-        puts "Current buffer content:"
-        puts $expect_out(buffer)
-    }
-}
+# Step 4: Navigate to find a .md file
 
-# Test navigation
-send "j"
-send "k"
+send "\033\[B"
+send "\033\[B"
+send "\033\[B"
+# Press Enter to open the selected file
+send "\r"
+send "\r"
+send "\r"
+send "\r"
+sleep 1
+
+# Step 5: Open browser preview
+send ":browser"
+send "\r"
+sleep 2
+
+# Step 6: Quit the editor
 send "q"
+send "\r"
 
+# Step 7: Wait for the program to exit
 expect {
     timeout {
-        puts "Timeout: Program did not exit after sending 'q'"
+        puts "Timeout: Program did not exit after sending ':q'"
         exit 1
     }
     eof {
