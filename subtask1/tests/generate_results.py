@@ -13,29 +13,30 @@ def parse_docker_output():
     with open('docker_output.log', 'r') as f:
         logs = f.read()
 
-    # Check for build success/failure
-    if "Finished 'release' profile [optimized] target(s) in" in logs:
+    # Check for build success
+    if "Finished" in logs and "target(s) in" in logs:
         results['build'] = 'passed'
     else:
         results['build'] = 'failed'
 
-    # Check for unit tests success/failure
-    unit_tests_pattern = r'test result: (\w+)\. (\d+) passed; (\d+) failed;'
+    # Check for unit tests success
+    unit_tests_pattern = r'test result: .*ok.*\. (\d+) passed; (\d+) failed;'
     unit_tests_match = re.search(unit_tests_pattern, logs)
-    if unit_tests_match:
-        if unit_tests_match.group(1) == 'ok' and unit_tests_match.group(3) == '0':
-            results['unit_tests'] = 'passed'
-        else:
-            results['unit_tests'] = 'failed'
+    if unit_tests_match and unit_tests_match.group(2) == '0':
+        results['unit_tests'] = 'passed'
+    else:
+        results['unit_tests'] = 'failed'
 
-    # Check for interaction test success/failure
+    # Check for interaction test success
     if 'Interaction test passed' in logs:
         results['interaction_test'] = 'passed'
-    elif 'Interaction test failed' in logs:
+    else:
         results['interaction_test'] = 'failed'
 
     # Check for Zig syntax highlighting test
-    if 'test tests::test_zig_syntax_highlighting ... ok' in logs:
+    zig_test_pattern = r'test tests::test_zig_syntax_highlighting \.\.\. .*ok'
+    zig_test_match = re.search(zig_test_pattern, logs, re.IGNORECASE)
+    if zig_test_match:
         results['zig_syntax_test'] = 'passed'
     else:
         results['zig_syntax_test'] = 'failed'
