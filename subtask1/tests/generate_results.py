@@ -14,13 +14,13 @@ def parse_docker_output():
         logs = f.read()
 
     # Check for build success/failure
-    if 'Finished `release` profile [optimized] target(s) in' in logs:
+    if "Finished 'release' profile [optimized] target(s) in" in logs:
         results['build'] = 'passed'
     else:
         results['build'] = 'failed'
 
     # Check for unit tests success/failure
-    unit_tests_pattern = r'test result: (ok|FAILED)\. (\d+) passed; (\d+) failed;'
+    unit_tests_pattern = r'test result: (\w+)\. (\d+) passed; (\d+) failed;'
     unit_tests_match = re.search(unit_tests_pattern, logs)
     if unit_tests_match:
         if unit_tests_match.group(1) == 'ok' and unit_tests_match.group(3) == '0':
