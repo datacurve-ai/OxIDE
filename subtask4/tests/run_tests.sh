@@ -7,7 +7,7 @@ set -e
 
 # Define variables for file paths
 DOCKERFILE="Dockerfile"
-DOCKER_COMPOSE_FILE="docker compose.yml"
+DOCKER_COMPOSE_FILE="docker-compose.yml"
 PARENT_DIR="../"
 TESTS_DIR="tests"
 LOG_FILE="${TESTS_DIR}/docker_output.log"
