@@ -1,5 +1,4 @@
-// src/app.rs
-
+use crossterm::terminal::size as terminal_size;
 use crate::lua_integration::LuaPluginManager;
 use crate::action::AppAction;
 use std::fs;
@@ -82,7 +81,7 @@ impl App {
             preview.update_content(&self.current_file);
         }
     }
-
+    
 
 
     pub fn update(&mut self) -> Result<(), std::io::Error> {
@@ -190,7 +189,28 @@ impl App {
         }
         Ok(())
     }
-
+    pub fn get_content_height(&self) -> usize {
+        match terminal_size() {
+            Ok((_, height)) => {
+                // From ui.rs, we have:
+                // - Vertical Layout: Main Content (Min 1), Status Bar (Length 1)
+                // - Horizontal Layout: File List (25%), Content (75%)
+                // Additionally, if Command Mode is active, reserve one more line.
+                let additional_lines = if let Mode::Command(_) = self.editor.mode {
+                    1
+                } else {
+                    0
+                };
+                // Ensure we don't underflow
+                if height > 2 + additional_lines {
+                    (height - 2 - additional_lines) as usize
+                } else {
+                    1 // Minimum content height
+                }
+            }
+            Err(_) => 10, // Fallback to a default value
+        }
+    }
     pub fn load_files(&mut self) -> Result<(), std::io::Error> {
         self.files.clear();
 
@@ -267,17 +287,30 @@ impl App {
         }
     }
 
+    pub fn move_cursor_down(&mut self) {
+        let max_cursor_y = self.current_file.lines().count().saturating_sub(1);
+        if self.cursor_y < max_cursor_y {
+            self.cursor_y += 1;
+            self.adjust_cursor_x();
+
+            // Calculate the height of the content area
+            let content_height = self.get_content_height();
+
+            // Adjust content scroll
+            if self.cursor_y >= self.content_scroll + content_height {
+                self.content_scroll = self.cursor_y.saturating_sub(content_height - 1);
+            }
+        }
+    }
     pub fn move_cursor_up(&mut self) {
         if self.cursor_y > 0 {
             self.cursor_y -= 1;
             self.adjust_cursor_x();
-        }
-    }
 
-    pub fn move_cursor_down(&mut self) {
-        if self.cursor_y < self.current_file.lines().count().saturating_sub(1) {
-            self.cursor_y += 1;
-            self.adjust_cursor_x();
+            // Adjust content scroll
+            if self.cursor_y < self.content_scroll {
+                self.content_scroll = self.cursor_y;
+            }
         }
     }
 

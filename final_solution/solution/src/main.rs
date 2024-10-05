@@ -8,6 +8,9 @@ mod markdown_preview;
 mod modes;
 mod ui;
 
+use crossterm::terminal::size as terminal_size; 
+
+
 use crate::app::App;
 use crossterm::{
     event::{self, Event},
@@ -72,6 +75,9 @@ fn run_app<B: tui::backend::Backend + std::io::Write>(
         terminal.draw(|f| {
             ui::draw(f, &app.borrow());
         })?;
+
+        // Ensure the cursor is shown
+        terminal.show_cursor()?;
 
         let timeout = tick_rate
             .checked_sub(last_tick.elapsed())
