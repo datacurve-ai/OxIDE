@@ -9,14 +9,19 @@ set -e
 DOCKERFILE="Dockerfile"
 DOCKER_COMPOSE_FILE="docker-compose.yml"
 PARENT_DIR="../"
-TESTS_DIR="run"
+TESTS_DIR="tests"
 LOG_FILE="${TESTS_DIR}/docker_output.log"
 
 echo "Copying necessary files to parent directory..."
 cp "${DOCKERFILE}" "${PARENT_DIR}"
 cp "${DOCKER_COMPOSE_FILE}" "${PARENT_DIR}"
 cp "Cargo.toml" "${PARENT_DIR}"
-
+cd ..
+mkdir templates
+mkdir static
+cd tests
+cp "styles.css" "../static"
+cp "preview.html" "../templates"
 
 echo "Changing to parent directory: ${PARENT_DIR}"
 cd "${PARENT_DIR}"
@@ -26,8 +31,7 @@ docker compose up --build --abort-on-container-exit | tee "${LOG_FILE}"
 
 echo "Changing back to tests directory: ${TESTS_DIR}"
 cd "${TESTS_DIR}"
-#cargo build --release
-#cargo run
+
 echo "Generating results.json..."
 python3 generate_results.py
 

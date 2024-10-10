@@ -1,0 +1,116 @@
+#!/usr/bin/expect -f
+
+# Set a timeout for Expect commands
+set timeout 10
+
+puts "Searching for terminal executable..."
+# Attempt to find the terminal executable in the release directory
+set executable [exec sh -c {find /app/target/release -type f -name "terminal" | head -n 1}]
+
+# If not found, fallback to using cargo run
+if {$executable eq ""} {
+    puts "Executable not found in release directory. Falling back to cargo run..."
+    set executable "cargo run --release --"
+} else {
+    puts "Found terminal executable: $executable"
+}
+
+puts "Attempting to spawn executable..."
+# Spawn the terminal executable or cargo run based on what was found
+if {[string match "cargo run*" $executable]} {
+    spawn {*}[split $executable " "]
+} else {
+    spawn $executable
+}
+
+# Wait for the application to initialize
+expect ">"
+sleep 2
+
+# Step 3: Ensure we're in Normal mode
+send "\x1b"
+sleep 0.5
+
+# Step 4: Navigate to find a .md file
+for {set i 0} {$i < 3} {incr i} {
+    send "\033\[B"
+    sleep 0.1
+}
+# Press Enter to open the selected file
+for {set i 0} {$i < 4} {incr i} {
+    send "\r"
+    sleep 0.1
+}
+
+# Step 5: Open browser preview
+send ":browser"
+send "\r"
+sleep 2
+send "\x1b"
+send "\x1b"
+
+# Initialize variables for attempting to find a file to edit
+set max_attempts 10
+set attempt 0
+set found_file 0
+
+# Loop to navigate through the file list and select a valid file
+while {$attempt < $max_attempts} {
+    # Press Down arrow to move to the next item
+    send "\033\[B"
+    sleep 0.5
+
+    # Press Enter to select/open the item
+    send "\r"
+    sleep 0.5
+
+    # Attempt to enter Insert mode
+    send "i"
+    sleep 0.5
+
+    # Type some text
+    send "Hello, Vim-like Editor!"
+    sleep 0.5
+
+    # Exit Insert mode by sending Escape key
+    send "\x1b"
+    sleep 0.5
+
+    # Enter Command mode by pressing ':'
+    send ":"
+    sleep 0.5
+
+    # Save the file with a specific filename
+    send "w testfile.txt\r"
+    sleep 0.5
+    send "\x1b"
+    sleep 0.5
+
+    # Quit the application by sending ':q'
+    send ":q\r"
+
+    # Expect either a successful exit (EOF) or a timeout
+    expect {
+        timeout {
+            puts "Timeout: Program did not exit after sending ':q'"
+            exit 1
+        }
+        eof {
+            puts "Program exited successfully"
+            set found_file 1
+            break
+        }
+    }
+
+    # Increment attempt counter if not found
+    incr attempt
+}
+
+# If no file was found after max attempts, exit with failure
+if {$found_file == 0} {
+    puts "No file found after $max_attempts attempts"
+    exit 1
+}
+
+puts "Interaction test passed"
+exit 0
